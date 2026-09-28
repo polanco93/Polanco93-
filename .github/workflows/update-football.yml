@@ -16,22 +16,20 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Obtener datos de API-Football
+      - name: Obtener datos reales de API-Football
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: |
           node <<'NODE'
           const fs = require("fs");
 
-          const KEY = process.env.API_FOOTBALL_KEY;
-          const BASE = "https://v3.football.api-sports.io";
-          const SEASON = 2026;
+          const key = process.env.API_FOOTBALL_KEY;
 
-          if (!KEY) {
+          if (!key) {
             throw new Error("Falta el secreto API_FOOTBALL_KEY");
           }
 
-          const leagues = [
+          const ligas = [
             [140, "LaLiga"],
             [39, "Premier League"],
             [135, "Serie A"],
@@ -39,70 +37,121 @@ jobs:
             [141, "Segunda División"]
           ];
 
-          async function obtener(league, name) {
-            const url =
-              `${BASE}/fixtures?league=${league}&season=${SEASON}&next=10`;
+          const temporada = 2026;
 
-            const response = await fetch(url, {
+          async function obtenerPartidos(idLiga, nombreLiga) {
+            const url =
+              `https://v3.football.api-sports.io/fixtures` +
+              `?league=${idLiga}` +
+              `&season=${temporada}` +
+              `&next=10`;
+
+            const respuesta = await fetch(url, {
               headers: {
-                "x-apisports-key": KEY
+                "x-apisports-key": key
               }
             });
 
-            const data = await response.json();
+            const datos = await respuesta.json();
 
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}`);
+            if (!respuesta.ok) {
+              throw new Error(
+                `${nombreLiga}: HTTP ${respuesta.status}`
+              );
             }
 
-            if (data.errors && Object.keys(data.errors).length > 0) {
-              throw new Error(JSON.stringify(data.errors));
+            if (datos.errors && Object.keys(datos.errors).length > 0) {
+              throw new Error(
+                `${nombreLiga}: ${JSON.stringify(datos.errors)}`
+              );
             }
 
-            return (data.response || []).map(x => ({
-              id: x.fixture.id,
-              league: name,
-              date: x.fixture.date,
-              status: x.fixture.status.short,
-              home: x.teams.home.name,
-              away: x.teams.away.name,
-              homeScore: x.goals.home,
-              awayScore: x.goals.away
+            return (datos.response || []).map(partido => ({
+              id: partido.fixture.id,
+              league: nombreLiga,
+              date: partido.fixture.date,
+              status: partido.fixture.status.short,
+              home: partido.teams.home.name,
+              away: partido.teams.away.name,
+              homeScore: partido.goals.home,
+              awayScore: partido.goals.away
             }));
           }
 
           (async () => {
-            let games = [];
+            let partidos = [];
             let errores = [];
 
-            for (const [league, name] of leagues) {
+            for (const [idLiga, nombreLiga] of ligas) {
               try {
-                const partidos = await obtener(league, name);
-                console.log(`${name}: ${partidos.length} partidos`);
-                games.push(...partidos);
+                const resultados =
+                  await obtenerPartidos(idLiga, nombreLiga);
+
+                console.log(
+                  `${nombreLiga}: ${resultados.length} partidos`
+                );
+
+                partidos.push(...resultados);
               } catch (error) {
-                console.log(`ERROR ${name}: ${error.message}`);
-                errores.push({
-                  liga: name,
-                  error: error.message
-                });
+                console.log(
+                  `ERROR ${nombreLiga}: ${error.message}`
+                );
+
+                errores.push(error.message);
               }
             }
 
-            games = [...new Map(
-              games.map(game => [game.id, game])
-            ).values()];
+            partidos = [
+              ...new Map(
+                partidos.map(partido => [partido.id, partido])
+              ).values()
+            ];
 
-            games.sort(
-              (a, b) => new Date(a.date) - new Date(b.date)
+            partidos.sort(
+              (a, b) =>
+                new Date(a.date) - new Date(b.date)
             );
 
-            const resultado = {
-              actualizadoEn: new Date().toISOString(),
+            if (partidos.length === 0) {
+              throw new Error(
+                "API-Football no devolvió ningún partido. " +
+                "Revisa el secreto API_FOOTBALL_KEY, la cuota de la API " +
+                "o la temporada solicitada. Errores: " +
+                JSON.stringify(errores)
+              );
+            }
+
+            const ahora = new Date().toISOString();
+
+            const juegos = partidos.map(partido => ({
+              id: partido.id,
+              league: partido.league,
+              date: partido.date,
+              status: partido.status,
+              home: partido.home,
+              away: partido.away,
+              homeScore: partido.homeScore,
+              awayScore: partido.awayScore,
+
+              a: partido.home,
+              b: partido.away,
+
+              score:
+                partido.homeScore !== null &&
+                partido.awayScore !== null
+                  ? `${partido.homeScore} - ${partido.awayScore}`
+                  : "—"
+            }));
+
+            const salida = {
+              updatedAt: ahora,
+              actualizadoEn: ahora,
+
+              source: "API-Football",
               fuente: "API-Football",
-              temporada: SEASON,
-              juegos: games,
-              errores: errores
+
+              games: juegos,
+              juegos: juegos
             };
 
             fs.mkdirSync("datos", { recursive: true });
@@ -110,31 +159,49 @@ jobs:
 
             fs.writeFileSync(
               "datos/fútbol.json",
-              JSON.stringify(resultado, null, 2)
+              JSON.stringify(salida, null, 2)
+            );
+
+            fs.writeFileSync(
+              "datos/football.json",
+              JSON.stringify(salida, null, 2)
             );
 
             fs.writeFileSync(
               "data/football.json",
-              JSON.stringify(resultado, null, 2)
+              JSON.stringify(salida, null, 2)
             );
 
-            console.log(`BETPRO: ${games.length} partidos actualizados`);
-
-            if (games.length === 0) {
-              throw new Error(
-                "API-Football devolvió 0 partidos. Revisa los errores mostrados arriba."
-              );
-            }
+            console.log(
+              `BETPRO: ${partidos.length} partidos guardados correctamente`
+            );
           })();
           NODE
 
+      - name: Comprobar archivos
+        run: |
+          echo "Comprobando datos..."
+          test -s datos/fútbol.json
+          test -s datos/football.json
+          test -s data/football.json
+
+          echo "Archivos creados:"
+          ls -lh datos/fútbol.json
+          ls -lh datos/football.json
+          ls -lh data/football.json
+
       - name: Guardar datos
         run: |
-          git config user.name "Bot BETPRO"
+          git config user.name "BETPRO Bot"
           git config user.email "actions@users.noreply.github.com"
 
-          git add datos/fútbol.json data/football.json
+          git add datos/fútbol.json
+          git add datos/football.json
+          git add data/football.json
 
-          git diff --cached --quiet || git commit -m "Actualizar datos reales de fútbol"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "No hay cambios nuevos."
+          else
+            git commit -m "Actualizar datos reales de fútbol"
+            git push
+          fi
