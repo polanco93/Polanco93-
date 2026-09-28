@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BETPRO — Pronósticos de fútbol</title>
+<style>
+:root{--bg:#07100d;--panel:#0d1915;--panel2:#11231c;--line:#1d3329;--text:#f2f7f4;--muted:#91a49a;--green:#35e58a;--green2:#1fc874;--red:#ff6b6b}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 80% -10%,#143a2a 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:inherit;text-decoration:none}.wrap{max-width:1180px;margin:auto;padding:0 22px}
+header{height:72px;border-bottom:1px solid var(--line);background:rgba(7,16,13,.9);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;letter-spacing:.08em;font-size:22px}.brand span{color:var(--green)}
+nav{display:flex;gap:24px;color:var(--muted);font-size:14px}nav a.active,nav a:hover{color:var(--text)}
+.hero{padding:58px 0 34px}.hero-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:22px}.hero-card{padding:38px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#10281e,#0b1713);overflow:hidden;position:relative}.hero-card:after{content:"⚽";position:absolute;right:25px;bottom:-35px;font-size:180px;opacity:.06}
+.kicker{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.hero h1{font-size:48px;line-height:1.02;margin:12px 0 15px;max-width:650px}.hero p{color:var(--muted);max-width:620px;font-size:16px;line-height:1.6}.btn{display:inline-block;margin-top:15px;padding:12px 18px;border-radius:11px;background:var(--green);color:#06100b;font-weight:800;border:0;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}.stat strong{font-size:28px;display:block}.stat small{color:var(--muted)}
+section{padding:24px 0}.section-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:15px}.section-head h2{margin:0;font-size:23px}.section-head span{color:var(--muted);font-size:13px}
+.filters{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.filter{white-space:nowrap;background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:9px 13px;cursor:pointer}.filter.active{background:#153326;color:var(--green);border-color:#286044}
+.matches{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.match{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}.league{font-size:11px;color:var(--green);font-weight:800}.time{float:right;color:var(--muted);font-size:12px}.teams{display:grid;grid-template-columns:1fr 42px 1fr;align-items:center;text-align:center;margin:22px 0}.team{text-align:center;font-weight:700}.crest{width:44px;height:44px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:#172a22;font-size:21px}.vs{color:var(--muted);font-size:12px}.pick{border-top:1px solid var(--line);padding-top:14px}.pick-row{display:flex;justify-content:space-between;align-items:center}.pill{font-size:11px;border-radius:999px;padding:6px 9px;background:#173b2b;color:var(--green);font-weight:800}.confidence{font-size:20px;font-weight:900}.muted{color:var(--muted);font-size:12px}.analysis{color:var(--muted);font-size:13px;line-height:1.5;margin:8px 0 0}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}.table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:13px}.table th{color:var(--muted);font-weight:600}.good{color:var(--green)}.bad{color:var(--red)}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:850px){nav{display:none}.hero-grid{grid-template-columns:1fr}.matches{grid-template-columns:1fr}.hero h1{font-size:37px}.wrap{padding:0 15px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><div class="brand">BET<span>PRO</span></div><nav><a class="active" href="#inicio">Inicio</a><a href="#partidos">Partidos</a><a href="#pronosticos">Pronósticos</a><a href="#estadisticas">Estadísticas</a><a href="#motor">Motor</a><a href="#admin">Panel</a></nav><button class="btn" style="margin:0;padding:9px 13px">Entrar</button></div></header>
+
+<main id="inicio" class="wrap">
+<section class="hero"><div class="hero-grid">
+<div class="hero-card"><div class="kicker">Análisis de fútbol</div><h1>Pronósticos con datos, no con promesas.</h1><p>Consulta probabilidades estimadas, mercados y rendimiento histórico en una interfaz sencilla. Datos mostrados aquí con fines demostrativos.</p><a class="btn" href="#pronosticos">Ver pronósticos</a></div>
+<div class="stats"><div class="stat"><small>Acierto histórico</small><strong>68.4%</strong></div><div class="stat"><small>Pronósticos</small><strong>327</strong></div><div class="stat"><small>Yield</small><strong>+8.7%</strong></div><div class="stat"><small>Últimos 30</small><strong class="good">23/30</strong></div></div>
+</div></section>
+
+<section id="partidos"><div class="section-head"><h2>Partidos destacados</h2><span>Datos de demostración · Hoy</span></div><div class="filters"><button class="filter active">Todos</button><button class="filter">LaLiga</button><button class="filter">Premier League</button><button class="filter">Champions</button><button class="filter">Serie A</button></div><div class="matches" id="matches"></div></section>
+
+<section id="pronosticos"><div class="section-head"><h2>Pronósticos destacados</h2><span>Ordenados por confianza</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Partido</th><th>Mercado</th><th>Probabilidad</th><th>Cuota</th><th>Valor estimado</th></tr></thead><tbody id="predictions"></tbody></table></div></section>
+
+
+
+<section id="admin">
+  <div class="section-head"><h2>Panel móvil</h2><span>Demo local · preparado para conectar analítica real</span></div>
+  <div class="hero-grid">
+    <div class="hero-card">
+      <div class="kicker">Control BETPRO</div>
+      <h2 style="margin:10px 0;font-size:28px">Tu panel desde Android</h2>
+      <p class="analysis">Desde aquí podrás gestionar pronósticos, revisar el rendimiento y consultar las visitas cuando conectemos la web a un servicio de analítica.</p>
+      <div style="display:grid;gap:10px;margin-top:18px">
+        <button class="btn admin-action" data-action="publicar">Publicar pronóstico</button>
+        <button class="filter admin-action" data-action="actualizar">Actualizar estadísticas</button>
+      </div>
+      <div id="adminMessage" class="muted" style="margin-top:12px" aria-live="polite"></div>
+    </div>
+    <div class="stat">
+      <small>Resumen de demostración</small>
+      <div style="display:grid;gap:12px;margin-top:16px">
+        <div class="pick-row"><span>Visitantes hoy</span><strong>1.284</strong></div>
+        <div class="pick-row"><span>Visitantes ahora</span><strong class="good">37</strong></div>
+        <div class="pick-row"><span>Pronósticos publicados</span><strong>12</strong></div>
+        <div class="pick-row"><span>Pronósticos acertados</span><strong>8</strong></div>
+      </div>
+      <p class="analysis">Estos números son ficticios hasta instalar analítica real en el dominio publicado.</p>
+    </div>
+  </div>
+</section>
+
+<section id="motor">
+  <div class="section-head">
+    <h2>Motor de pronósticos</h2>
+    <span>Modelo estadístico V1 · datos de demostración</span>
+  </div>
+  <div class="hero-grid">
+    <div class="hero-card">
+      <div class="kicker">Análisis automático</div>
+      <h2 id="engineMatch" style="margin:10px 0;font-size:28px">Barcelona vs Sevilla</h2>
+      <p id="engineExplanation" class="analysis">Calculando a partir de forma, goles y rendimiento local/visitante.</p>
+      <div id="enginePicks" style="display:grid;gap:10px;margin-top:18px"></div>
+    </div>
+    <div class="stat">
+      <small>Datos utilizados</small>
+      <div style="margin-top:16px;display:grid;gap:10px">
+        <div class="pick-row"><span>Forma local</span><b>4.2/5</b></div>
+        <div class="pick-row"><span>Forma visitante</span><b>2.8/5</b></div>
+        <div class="pick-row"><span>Goles local</span><b>2.1</b></div>
+        <div class="pick-row"><span>Goles visitante</span><b>1.1</b></div>
+        <div class="pick-row"><span>Defensa local</span><b>0.8 enc.</b></div>
+        <div class="pick-row"><span>Defensa visitante</span><b>1.5 enc.</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="estadisticas"><div class="section-head"><h2>Rendimiento reciente</h2><span>Histórico de demostración</span></div><div class="matches"><div class="stat"><small>Últimos 10</small><strong>7 aciertos</strong><p class="analysis">70% de acierto en la muestra.</p></div><div class="stat"><small>Mercado más usado</small><strong>Over 2.5</strong><p class="analysis">Mayor volumen dentro de esta demo.</p></div><div class="stat"><small>Seguimiento</small><strong>Semanal</strong><p class="analysis">Resultados registrados partido a partido.</p></div></div></section>
+</main>
+<footer><div class="wrap">BETPRO V1 · Prototipo. Las probabilidades y estadísticas mostradas son ficticias y sirven únicamente para demostrar la interfaz.</div></footer>
+
+<script>
+const games=[
+{league:"LALIGA",time:"18:30",a:"Barcelona",b:"Sevilla",ea:"🔵🔴",eb:"⚪",pick:"Más de 2.5 goles",p:"72%",odd:"1.62",value:"+16%"},
+{league:"PREMIER LEAGUE",time:"20:00",a:"Arsenal",b:"Chelsea",ea:"🔴",eb:"🔵",pick:"Ambos marcan",p:"69%",odd:"1.70",value:"+17%"},
+{league:"SERIE A",time:"20:45",a:"Inter",b:"Roma",ea:"⚫🔵",eb:"🟠",pick:"Inter gana",p:"66%",odd:"1.58",value:"+4%"},
+];
+document.getElementById("matches").innerHTML=games.map(g=>`<article class="match"><span class="league">${g.league}</span><span class="time">${g.time}</span><div class="teams"><div class="team"><div class="crest">${g.ea}</div>${g.a}</div><div class="vs">VS</div><div class="team"><div class="crest">${g.eb}</div>${g.b}</div></div><div class="pick"><div class="pick-row"><span class="pill">${g.pick}</span><span class="confidence">${g.p}</span></div><div class="muted">Cuota demo ${g.odd} · Valor ${g.value}</div></div></article>`).join("");
+document.getElementById("predictions").innerHTML=games.map(g=>`<tr><td><b>${g.a} vs ${g.b}</b></td><td>${g.pick}</td><td class="good"><b>${g.p}</b></td><td>${g.odd}</td><td class="good"><b>${g.value}</b></td></tr>`).join("");
+document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
+
+// BETPRO Motor V1 (demo): modelo transparente, no garantía de resultados.
+function poisson(lambda, k){
+  let f=1;
+  for(let i=2;i<=k;i++) f*=i;
+  return Math.exp(-lambda)*Math.pow(lambda,k)/f;
+}
+function goalMatrix(homeLambda, awayLambda){
+  const m=[];
+  for(let h=0;h<=7;h++){
+    m[h]=[];
+    for(let a=0;a<=7;a++) m[h][a]=poisson(homeLambda,h)*poisson(awayLambda,a);
+  }
+  return m;
+}
+function modelPredict(){
+  // Example inputs. Later these will come from the football data API/database.
+  const home={form:4.2, gf:2.1, ga:0.8, homeBoost:1.10};
+  const away={form:2.8, gf:1.1, ga:1.5, awayBoost:0.95};
+  const homeLambda=Math.max(.25,(home.gf*0.62 + away.ga*0.38)*(home.homeBoost));
+  const awayLambda=Math.max(.20,(away.gf*0.62 + home.ga*0.38)*(away.awayBoost));
+  const m=goalMatrix(homeLambda,awayLambda);
+  let homeWin=0, draw=0, awayWin=0, over25=0, btts=0, total=0;
+  for(let h=0;h<=7;h++) for(let a=0;a<=7;a++){
+    const p=m[h][a]; total+=p;
+    if(h>a) homeWin+=p; else if(h===a) draw+=p; else awayWin+=p;
+    if(h+a>=3) over25+=p;
+    if(h>=1 && a>=1) btts+=p;
+  }
+  const norm=x=>Math.round((x/total)*100);
+  const picks=[
+    ["Barcelona gana",norm(homeWin)],
+    ["Empate",norm(draw)],
+    ["Sevilla gana",norm(awayWin)],
+    ["Más de 2.5 goles",norm(over25)],
+    ["Ambos marcan",norm(btts)]
+  ];
+  const sorted=[...picks].sort((a,b)=>b[1]-a[1]);
+  document.getElementById("enginePicks").innerHTML=sorted.map((x,i)=>
+    `<div class="pick-row" style="padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)">
+      <span>${i===0?"🔥 ":""}${x[0]}</span><b class="good">${x[1]}%</b>
+    </div>`).join("");
+  document.getElementById("engineExplanation").textContent =
+    `El modelo estima ${homeLambda.toFixed(2)} goles para Barcelona y ${awayLambda.toFixed(2)} para Sevilla. Las probabilidades se obtienen de una distribución de Poisson y se normalizan sobre los marcadores 0–7.`;
+}
+modelPredict();
+
+
+document.querySelectorAll(".admin-action").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const msg=document.getElementById("adminMessage");
+    msg.textContent=btn.dataset.action==="publicar"
+      ?"Demo: el formulario de publicación estará conectado a la base de datos en la versión online."
+      :"Demo: estadísticas actualizadas. Al publicar la web, aquí conectaremos las visitas reales.";
+  });
+});
+
+</script>
+</body></html>
