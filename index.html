@@ -1,1 +1,44 @@
-
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BETPRO</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#03110c;color:#eef7f2;font-family:Arial,sans-serif}
+header{padding:22px 18px;border-bottom:1px solid #163326;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#03110c;z-index:2}
+.logo{font-size:34px;font-weight:800;letter-spacing:1px}.logo span{color:#35e889}
+button{background:#0b2118;color:#fff;border:1px solid #214936;border-radius:14px;padding:13px 18px;font-weight:700;font-size:16px}
+main{max-width:900px;margin:auto;padding:22px 16px 90px}.hero,.card{border:1px solid #18392a;background:#071a12;border-radius:24px;padding:22px;margin-bottom:18px}
+h1{font-size:34px;margin:0 0 10px}.sub{color:#9bb0a6;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.stat{padding:18px;border:1px solid #18392a;border-radius:18px}.stat b{display:block;font-size:30px;margin-top:6px}.green{color:#35e889}
+nav{position:fixed;bottom:0;left:0;right:0;background:#06150f;border-top:1px solid #18392a;display:flex;justify-content:space-around;padding:10px 4px;z-index:3}
+nav a{color:#9bb0a6;text-decoration:none;text-align:center;font-size:12px}.active{color:#35e889!important}
+.section{display:none}.section.active{display:block}.pick{display:flex;justify-content:space-between;gap:10px;padding:14px 0;border-bottom:1px solid #18392a}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="logo">BET<span>PRO</span></div><button onclick="show('panel')">Mi panel</button></header>
+<main>
+<section id="inicio" class="section active">
+<div class="hero"><h1>Predicciones de fútbol</h1><p class="sub">Análisis estadístico de partidos, tiros y resultados. BETPRO muestra probabilidades informativas; no garantiza resultados.</p></div>
+<div class="card"><h2>Estado</h2><div class="grid"><div class="stat">Partidos<b id="matches">0</b></div><div class="stat">Pronósticos<b id="preds">0</b></div><div class="stat">Tiros<b>—</b></div><div class="stat">Datos<b class="green">ACTIVO</b></div></div></div>
+</section>
+<section id="partidos" class="section"><div class="card"><h2>⚽ Partidos</h2><div id="games"><p class="sub">Cargando datos…</p></div></div></section>
+<section id="tiros" class="section"><div class="card"><h2>🎯 Tiros</h2><p class="sub">Aquí mostraremos tiros totales y tiros a puerta por jugador cuando conectemos la fuente de datos.</p></div></section>
+<section id="pronosticos" class="section"><div class="card"><h2>📊 Pronósticos</h2><div class="pick"><span>1X2</span><b>Disponible</b></div><div class="pick"><span>Más/Menos 2.5</span><b>Disponible</b></div><div class="pick"><span>Ambos marcan</span><b>Disponible</b></div></div></section>
+<section id="panel" class="section"><div class="card"><h2>⚙️ Mi panel</h2><p class="sub">El panel de administración se conectará después. Primero dejamos la web base funcionando.</p><button onclick="show('inicio')">Volver al inicio</button></div></section>
+</main>
+<nav>
+<a href="#" class="active" onclick="show('inicio');return false">🏠<br>Inicio</a>
+<a href="#" onclick="show('partidos');return false">⚽<br>Partidos</a>
+<a href="#" onclick="show('tiros');return false">🎯<br>Tiros</a>
+<a href="#" onclick="show('pronosticos');return false">📊<br>Pronósticos</a>
+<a href="#" onclick="show('panel');return false">⚙️<br>Panel</a>
+</nav>
+<script>
+function show(id){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));document.querySelectorAll('nav a')[['inicio','partidos','tiros','pronosticos','panel'].indexOf(id)].classList.add('active')}
+</script>
+</body>
+</html>
